@@ -21,23 +21,30 @@ function formatAssignment(text) {
 }
 
 export default function CodeQuestion({ q }) {
-  const [code, setCode] = useState(q.codeblock || '')
+  const savedCode = localStorage.getItem(`code_${q.id}`) || q.codeblock || ''
+  const [code, setCode] = useState(savedCode)
   const [output, setOutput] = useState('')
   const [running, setRunning] = useState(false)
   const [showAnswer, setShowAnswer] = useState(false)
   const editorRef = useRef(null)
   const viewRef = useRef(null)
-  const { load, run } = usePyodide()
+  const { load, run, pyReady } = usePyodide()
 
   useEffect(() => {
     load(setOutput)
   }, [])
 
+  // Save code to cache whenever it changes
+  useEffect(() => {
+    if (!q.id) return
+    localStorage.setItem(`code_${q.id}`, code)
+  }, [code])
+
   useEffect(() => {
     if (viewRef.current || !editorRef.current) return
     viewRef.current = new EditorView({
       state: EditorState.create({
-        doc: q.codeblock || '',
+        doc: savedCode,
         extensions: [
           basicSetup,
           keymap.of([...defaultKeymap, indentWithTab]),
@@ -74,8 +81,12 @@ export default function CodeQuestion({ q }) {
       <div ref={editorRef} className="editor-wrapper" />
 
       <div className="btn-row">
-        <button onClick={() => run(code, setOutput, setRunning)} disabled={running} className="btn-primary">
-          {running ? 'Kører...' : '▶ Kør'}
+        <button
+          onClick={() => run(code, setOutput, setRunning)}
+          disabled={running || !pyReady}
+          className="btn-primary"
+        >
+          {!pyReady ? 'Loading Python...' : running ? 'Kører...' : '▶ Kør'}
         </button>
         <button onClick={() => setShowAnswer(v => !v)} className="btn-secondary">
           {showAnswer ? 'Skjul svar' : 'Vis svar'}

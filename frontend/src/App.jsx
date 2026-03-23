@@ -92,10 +92,12 @@ export default function App() {
   const loadSession = (key) => {
     const cached = localStorage.getItem(key)
     if (!cached) return
+    const subject = key.replace('questions_', '').split('_')[0]
+    setSubject(subject)
     setQuestions(JSON.parse(cached))
     setActiveSession(key)
     setStatus('')
-  }
+}
 
   const deleteSession = (key) => {
     localStorage.removeItem(key)

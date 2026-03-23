@@ -1,8 +1,9 @@
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 
 export function usePyodide() {
   const pyodideRef = useRef(null)
   const loadingRef = useRef(false)
+  const [pyReady, setPyReady] = useState(false)
 
   const load = async (setOutput) => {
     if (loadingRef.current) return
@@ -11,6 +12,7 @@ export function usePyodide() {
     setOutput('Loading Python...')
     pyodideRef.current = await window.loadPyodide()
     setOutput('')
+    setPyReady(true)
   }
 
   const run = async (code, setOutput, setRunning) => {
@@ -28,5 +30,5 @@ export function usePyodide() {
     setRunning(false)
   }
 
-  return { load, run }
+  return { load, run, pyReady }
 }
