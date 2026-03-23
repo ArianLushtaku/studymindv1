@@ -2,11 +2,11 @@ import { useEffect, useRef, useState } from 'react'
 import { EditorView, keymap } from '@codemirror/view'
 import { EditorState } from '@codemirror/state'
 import { defaultKeymap, indentWithTab } from '@codemirror/commands'
+import { indentUnit } from '@codemirror/language'
 import { python } from '@codemirror/lang-python'
 import { oneDark } from '@codemirror/theme-one-dark'
 import { basicSetup } from 'codemirror'
 import { usePyodide } from '../hooks/usePyodide'
-import { indentUnit } from '@codemirror/language'
 
 function formatAssignment(text) {
   return text
@@ -21,8 +21,24 @@ function formatAssignment(text) {
     })
 }
 
+function splitCode(codeblock) {
+  if (!codeblock) return { editable: '', tests: '' }
+  const splitMarkers = ['# Test cases', '# Tests', '# test cases']
+  for (const marker of splitMarkers) {
+    const idx = codeblock.indexOf(marker)
+    if (idx !== -1) {
+      return {
+        editable: codeblock.slice(0, idx).trim(),
+        tests: codeblock.slice(idx).trim()
+      }
+    }
+  }
+  return { editable: codeblock, tests: '' }
+}
+
 export default function CodeQuestion({ q }) {
-  const savedCode = localStorage.getItem(`code_${q.id}`) || q.codeblock || ''
+  const { editable, tests } = splitCode(q.codeblock)
+  const savedCode = localStorage.getItem(`code_${q.id}`) || editable
   const [code, setCode] = useState(savedCode)
   const [output, setOutput] = useState('')
   const [running, setRunning] = useState(false)
@@ -30,12 +46,12 @@ export default function CodeQuestion({ q }) {
   const editorRef = useRef(null)
   const viewRef = useRef(null)
   const { load, run, pyReady } = usePyodide()
+  const [showInfo, setShowInfo] = useState(true)
 
   useEffect(() => {
     load(setOutput)
   }, [])
 
-  // Save code to cache whenever it changes
   useEffect(() => {
     if (!q.id) return
     localStorage.setItem(`code_${q.id}`, code)
@@ -65,6 +81,11 @@ export default function CodeQuestion({ q }) {
     })
   }, [])
 
+  const runFull = () => {
+    const fullCode = code + '\n\n' + tests
+    run(fullCode, setOutput, setRunning)
+  }
+
   return (
     <div className="card">
       <div className="card-header">
@@ -79,12 +100,32 @@ export default function CodeQuestion({ q }) {
       {q['Input/Output'] && (
         <pre className="pre-io">{q['Input/Output']}</pre>
       )}
+      <div className="code-info">
+        <div className="code-info-header" onClick={() => setShowInfo(v => !v)}>
+          <span className="code-info-icon">ℹ</span>
+          <span className="code-info-title">Sådan fungerer kodeopgaverne</span>
+          <span style={{ marginLeft: 'auto', color: 'var(--text-dim)', fontSize: '0.7rem' }}>
+            {showInfo ? '▲ skjul' : '▼ vis'}
+          </span>
+        </div>
+        {showInfo && (
+          <div className="code-info-body">
+            <p>Du skal skrive din løsning i editoren nedenfor. Når du trykker <strong>▶ Kør</strong>, kører din kode mod en række skjulte tests.</p>
+            <p>Hver test tjekker om din funktion returnerer det rigtige resultat for et bestemt input. Hvis alle tests består, ser du:</p>
+            <pre className="code-info-example success">Test 1 passed: Valid email accepted
+      Test 2 passed: Uppercase converted to lowercase</pre>
+            <p>Hvis din kode er forkert, ser du en fejl som denne:</p>
+            <pre className="code-info-example error">AssertionError: Test 1 failed</pre>
+            <p>Det betyder at din funktion returnerede et forkert resultat. Ret din kode og tryk <strong>▶ Kør</strong> igen. Brug <strong>Vis svar</strong> hvis du er gået i stå.</p>
+          </div>
+        )}
+      </div>
 
       <div ref={editorRef} className="editor-wrapper" />
 
       <div className="btn-row">
         <button
-          onClick={() => run(code, setOutput, setRunning)}
+          onClick={runFull}
           disabled={running || !pyReady}
           className="btn-primary"
         >

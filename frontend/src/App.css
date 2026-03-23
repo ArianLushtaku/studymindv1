@@ -906,3 +906,71 @@ html[data-theme="quiz"] .theme-btn {
 html[data-theme="quiz"] .theme-selector {
   margin-top: 1.25rem;
 }
+.code-info {
+  border: 1px solid var(--green-muted);
+  border-left: 2px solid var(--green);
+  background: rgba(0, 255, 157, 0.03);
+  margin-bottom: 1rem;
+}
+
+.code-info-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+}
+
+.code-info-icon {
+  color: var(--green-dim);
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+
+.code-info-title {
+  font-size: 0.78rem;
+  color: var(--green-dim);
+  letter-spacing: 0.05em;
+  font-family: var(--display);
+  font-weight: 600;
+}
+
+.code-info-body {
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.code-info-body p {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.code-info-body strong {
+  color: var(--text);
+  font-weight: 500;
+}
+
+.code-info-example {
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+  margin: 0;
+}
+
+.code-info-example.success {
+  background: rgba(0, 255, 157, 0.06);
+  color: var(--green);
+  border-left: 2px solid var(--green-dim);
+}
+
+.code-info-example.error {
+  background: rgba(255, 68, 68, 0.06);
+  color: var(--red);
+  border-left: 2px solid var(--red-dim);
+}
