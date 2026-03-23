@@ -21,6 +21,13 @@ jobs:
           npm install
           npm run build
 
+      - name: Connect Tailscale
+        uses: tailscale/github-action@v2
+        with:
+          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+          oauth-client-secret: ${{ secrets.TS_OAUTH_SECRET }}
+          tags: tag:ci
+
       - name: Deploy to Pi
         uses: appleboy/ssh-action@master
         with:
