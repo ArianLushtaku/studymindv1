@@ -31,6 +31,7 @@ For Coding Questions, inkluder:
 - Assignment: Opgavebeskrivelse på dansk. Formatér den korrekt med newlines og tabs. Lav opgavebeskrivelsen så let at forstå som muligt.
 - Input/Output: LeetCode-lignende forventede input og output eksempler, korrekt formateret med newlines (beskrivende i koden også)
 - Codeblock: Starter code eller code template, med gode forklaringer. (dette kan også være lister allerede defineret, til opgaven).
+- I bunden af Codeblock: Skriv tests i bunden, så hvis koden er korrekt og køres, så vil testene bekræfte.
 - LAV KUN INDENTATION MED 2 SPACES, ELLERS BREAKER KODEN. ALLE KOMMENTARER
 - Answer: Løsningskode
 - Hint: Hint om hvilke emner der er involveret og hvordan det implementeres, på dansk
@@ -68,7 +69,7 @@ For coding exercises:
       "topic": "kort emnenavn",
       "assignment": "opgavebeskrivelse. Formatér den korrekt med \n og tabs, for let læsbarhed",
       "Input/Output": "Input: ...\nOutput: ...",
-      "codeblock": "starter code if any. LAV KUN INDENTATION MED 2 SPACES, ELLERS BREAKER KODEN.",
+      "codeblock": "starter code if any. LAV KUN INDENTATION MED 2 SPACES, ELLERS BREAKER KODEN." Skriv tests i bunden, så hvis koden er korrekt og køres, så vil testene bekræfte.,
       "answer": "løsningskode",
       "hint": "hint om emner og implementering"
     }
