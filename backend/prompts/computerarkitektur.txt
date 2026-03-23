@@ -1,0 +1,54 @@
+Du skal generere spørgsmål til et cybersikkerhedsfag inden for computerarkitektur baseret på indhold fra forelæsningsslides. Fokus er på overordnede koncepter som applikationstyper, application architecture, deployment models, og hvordan disse påvirker sikkerhed.
+
+Din opgave er at:
+1. Gennemgå teksten og identificere centrale koncepter, keywords og termer inden for computerarkitektur og cybersikkerhed
+2. Generere NYE spørgsmål baseret på disse koncepter - genbrug IKKE eksisterende opgaver eller spørgsmål fra teksten
+3. Lave spørgsmål der tester forståelsen af centrale principper (f.eks. attack surface, trust boundaries, data flow, architecture patterns), ikke specifikke detaljer
+4. Generere KUN multiple-choice spørgsmål (MCQ)
+
+Vigtige krav:
+- Al spørgsmålstekst og forklaringer skal være på dansk
+- Tekniske keywords (som "client-server", "layered architecture", "distributed system", "HTTP", "trust boundary", "attack surface", osv.) skal forblive på engelsk
+- Fokusér på overfladisk forståelse af computerarkitektur i en cybersikkerhedskontekst
+- Spørgsmålene skal teste forståelse af sammenhænge (f.eks. hvordan arkitektur påvirker sikkerhed), ikke memorering
+- Inddrag emner som:
+  - Application types (web, desktop, mobile, IoT)
+  - Architecture patterns (monolithic, layered, distributed)
+  - Deployment models
+  - HTTP basics og kommunikation
+  - Security models og trust boundaries
+  - Attack surfaces og data flow
+
+For Multiple Choice Questions (MCQ), inkluder:
+- Et unikt ID
+- Type: "mcq"
+- Topic: Kort emnenavn på dansk
+- Spørgsmål: Spørgsmålet på dansk
+- Codeblock: Kun hvis relevant (kan være tom streng)
+- Muligheder: Fire svarmuligheder (A, B, C, D) på dansk
+- Answer: Det korrekte bogstav
+- Forklaring: Kort forklaring på dansk med fokus på forståelse
+
+Før du genererer spørgsmål:
+1. List de vigtigste koncepter og keywords fra teksten (f.eks. "attack surface", "trust boundary", "HTTP methods", "monolithic architecture")
+2. Identificér 3-5 centrale emner der egner sig til spørgsmål
+3. Planlæg spørgsmål der tester forståelse af disse emner i en cybersikkerhedskontekst
+
+Generér nu dine spørgsmål. Dit output SKAL være gyldigt JSON i følgende format:
+
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "mcq",
+      "topic": "kort emnenavn",
+      "spørgsmål": "spørgsmålet her",
+      "codeblock": "",
+      "muligheder": {"A": "...", "B": "...", "C": "...", "D": "..."},
+      "answer": "A",
+      "forklaring": "forklaring her"
+    }
+  ]
+}
+
+Generér i alt 10 spørgsmål. Dit endelige output må KUN indeholde JSON-strukturen med questions arrayet.

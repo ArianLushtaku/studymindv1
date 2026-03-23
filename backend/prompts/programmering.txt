@@ -1,0 +1,77 @@
+Du skal generere programmeringsspørgsmål og coding exercises til et cybersikkerhedskursus kaldet "Programmering" baseret på indhold fra forelæsningsslides. Programmeringssproget er Python, og alle spørgsmål skal være på dansk (undtagen coding keywords som forbliver på engelsk).
+
+Din opgave er at:
+1. Gennemgå teksten og identificere centrale programmeringskoncepter, keywords og termer
+2. Generere NYE spørgsmål baseret på disse koncepter - genbrug IKKE eksisterende opgaver eller spørgsmål fra teksten
+3. Lave spørgsmål der tester forståelsen af de vigtigste emner og koncepter, ikke specifikke detaljer fra teksten
+4. Generere både multiple-choice spørgsmål (MCQ) og coding exercises
+
+Vigtige krav:
+- Al spørgsmålstekst, forklaringer og opgaver skal være på dansk
+- Alle coding keywords (som "loop", "function", "if-else", "list", "dictionary", osv.) skal forblive på engelsk
+- Brug kun Python som programmeringssprog
+- Fokusér på koncepter relevante for cybersikkerhedsprogrammering
+- Spørgsmålene skal ligne stilen fra teksten, men med forskelligt indhold
+
+For Multiple Choice Questions (MCQ), inkluder:
+- Et unikt ID
+- Type: "mcq"
+- Topic: Kort emnenavn på dansk
+- Spørgsmål: Spørgsmålet på dansk
+- Codeblock: Code context hvis relevant (kan være tom streng hvis ikke nødvendigt)
+- Muligheder: Fire svarmuligheder (A, B, C, D) på dansk
+- Answer: Det korrekte bogstav
+- Forklaring: Kort forklaring af svaret på dansk
+
+For Coding Questions, inkluder:
+- Et unikt ID
+- Type: "code"
+- Topic: Kort emnenavn på dansk
+- MÅ IKKE INDEHOLDE OPGAVER MED INPUT().
+- Assignment: Opgavebeskrivelse på dansk. Formatér den korrekt med newlines og tabs. Lav opgavebeskrivelsen så let at forstå som muligt.
+- Input/Output: LeetCode-lignende forventede input og output eksempler, korrekt formateret med newlines (beskrivende i koden også)
+- Codeblock: Starter code eller code template, med gode forklaringer. (dette kan også være lister allerede defineret, til opgaven)
+- Answer: Løsningskode
+- Hint: Hint om hvilke emner der er involveret og hvordan det implementeres, på dansk
+
+Før du genererer spørgsmål:
+1. List de vigtigste programmeringskoncepter og keywords fundet i teksten
+2. Identificér 3-5 nøgleemner der egner sig til spørgsmål
+3. Beslut hvilke emner der fungerer bedst som MCQ vs coding exercises
+4. Planlæg de specifikke spørgsmål du vil lave
+
+Generér nu dine spørgsmål. Dit output SKAL være gyldigt JSON og følge ét af disse præcise formater:
+
+For MCQ:
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "mcq",
+      "topic": "kort emnenavn",
+      "spørgsmål": "spørgsmålet her",
+      "codeblock": "code context if needed",
+      "muligheder": {"A": "...", "B": "...", "C": "...", "D": "..."},
+      "answer": "A",
+      "forklaring": "forklaring her"
+    }
+  ]
+}
+
+For coding exercises:
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "code",
+      "topic": "kort emnenavn",
+      "assignment": "opgavebeskrivelse. Formatér den korrekt med \n og tabs, for let læsbarhed",
+      "Input/Output": "Input: ...\nOutput: ...",
+      "codeblock": "starter code if any",
+      "answer": "løsningskode",
+      "hint": "hint om emner og implementering"
+    }
+  ]
+}
+
+Generér i alt 10 spørgsmål, med en blanding af både MCQ og coding questions afhængigt af indholdet. Dit endelige output må KUN indeholde JSON-strukturen med questions arrayet - inkluder ikke scratchpad eller anden forklarende tekst.
