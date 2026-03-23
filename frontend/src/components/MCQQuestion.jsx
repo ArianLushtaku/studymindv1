@@ -1,8 +1,22 @@
 import { useState } from 'react'
 
 export default function MCQQuestion({ q }) {
-  const [selected, setSelected] = useState(null)
-  const [revealed, setRevealed] = useState(false)
+  const selectedKey = `selected_${q.id}`
+  const revealedKey = `revealed_${q.id}`
+
+  const [selected, setSelected] = useState(localStorage.getItem(selectedKey) || null)
+  const [revealed, setRevealed] = useState(localStorage.getItem(revealedKey) === 'true')
+
+  const handleSelect = (key) => {
+    if (revealed) return
+    setSelected(key)
+    localStorage.setItem(selectedKey, key)
+  }
+
+  const handleReveal = () => {
+    setRevealed(true)
+    localStorage.setItem(revealedKey, 'true')
+  }
 
   return (
     <div className="card">
@@ -27,7 +41,7 @@ export default function MCQQuestion({ q }) {
           else if (isSelected) cls += ' selected'
 
           return (
-            <button key={key} className={cls} onClick={() => !revealed && setSelected(key)}>
+            <button key={key} className={cls} onClick={() => handleSelect(key)}>
               <span style={{ color: 'var(--green-dim)', marginRight: '0.75rem' }}>{key}.</span>{val}
             </button>
           )
@@ -36,7 +50,7 @@ export default function MCQQuestion({ q }) {
 
       <button
         className={`btn-check${selected && !revealed ? ' active' : ''}`}
-        onClick={() => setRevealed(true)}
+        onClick={handleReveal}
         disabled={!selected || revealed}
       >
         {revealed ? '// svar afsløret' : '// check svar'}

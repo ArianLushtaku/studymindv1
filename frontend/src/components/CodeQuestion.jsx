@@ -6,6 +6,7 @@ import { python } from '@codemirror/lang-python'
 import { oneDark } from '@codemirror/theme-one-dark'
 import { basicSetup } from 'codemirror'
 import { usePyodide } from '../hooks/usePyodide'
+import { indentUnit } from '@codemirror/language'
 
 function formatAssignment(text) {
   return text
@@ -50,6 +51,7 @@ export default function CodeQuestion({ q }) {
           keymap.of([...defaultKeymap, indentWithTab]),
           python(),
           oneDark,
+          indentUnit.of('    '),
           EditorView.updateListener.of(update => {
             if (update.docChanged) setCode(update.state.doc.toString())
           }),
