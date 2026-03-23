@@ -17,7 +17,7 @@ load_dotenv()
 client = anthropic.Anthropic()
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
-CORS(app, origins=["http://localhost:5173", "http://127.0.0.1:5173"])
+CORS(app, origins=["http://localhost:5173", "http://127.0.0.1:5173", "https://www.cybsf26a.app", "https://cybsf26a.app"])
 
 limiter = Limiter(
     get_remote_address,
