@@ -1,7 +1,5 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-from flask_limiter import Limiter
-from flask_limiter.util import get_remote_address
 from pypdf import PdfReader
 from io import BytesIO
 from markitdown import MarkItDown
@@ -19,12 +17,12 @@ app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
 CORS(app, origins=["http://localhost:5173", "http://127.0.0.1:5173", "https://www.cybsf26a.app", "https://cybsf26a.app"])
 
-limiter = Limiter(
-    get_remote_address,
-    app=app,
-    default_limits=["60 per minute"],
-    storage_uri="memory://",
-)
+ALLOWED_ORIGINS = {"http://localhost:5173", "http://127.0.0.1:5173", "https://www.cybsf26a.app", "https://cybsf26a.app"}
+
+def require_browser_origin():
+    origin = request.headers.get("Origin") or request.headers.get("Referer", "")
+    if not any(origin.startswith(allowed) for allowed in ALLOWED_ORIGINS):
+        return jsonify({'message': 'Requests must originate from the web app'}), 403
 
 SUBJECT_MAP = {
     'Programmering': 'programmering',
@@ -119,8 +117,10 @@ def home():
 
 
 @app.route('/upload', methods=['POST'])
-@limiter.limit("5 per day")
 def upload_file():
+    blocked = require_browser_origin()
+    if blocked:
+        return blocked
     if 'file' not in request.files or 'subject' not in request.form:
         return jsonify({'message': 'No file part or subject in the request'}), 400
 
@@ -165,8 +165,10 @@ def ingest_file():
 
 
 @app.route('/generate', methods=['POST'])
-@limiter.limit("5 per day")
 def generate():
+    blocked = require_browser_origin()
+    if blocked:
+        return blocked
     data = request.json
     subject = data.get('subject', 'general')
     topic = data.get('topic', '')
@@ -187,10 +189,6 @@ def generate():
     except Exception as e:
         return jsonify({'message': 'Error: ' + str(e)}), 500
 
-
-@app.errorhandler(429)
-def ratelimit_handler(e):
-    return jsonify({'message': f'Rate limit exceeded: {e.description}'}), 429
 
 
 if __name__ == '__main__':

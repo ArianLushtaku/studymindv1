@@ -71,7 +71,7 @@ export default function App() {
       const data = await response.json()
 
       if (response.status === 429) {
-        setStatus('Daglig grænse nået: Du kan maks uploade 5 filer per dag. Prøv igen i morgen.')
+        setStatus('For mange anmodninger. Prøv igen om lidt.')
         return
       }
 

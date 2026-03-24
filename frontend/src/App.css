@@ -974,3 +974,88 @@ html[data-theme="quiz"] .theme-selector {
   color: var(--red);
   border-left: 2px solid var(--red-dim);
 }
+
+/* ── Mobile responsive ───────────────────────────────────── */
+@media (max-width: 768px) {
+  .layout {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    min-width: unset;
+    height: auto;
+    position: static;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    overflow-y: visible;
+  }
+
+  .page {
+    padding: 1.25rem 1rem;
+    max-width: 100%;
+  }
+
+  .page-title {
+    font-size: 1.75rem;
+  }
+
+  .page-meta {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .theme-selector {
+    flex-wrap: wrap;
+  }
+
+  .file-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .file-input {
+    width: 100%;
+  }
+
+  .btn-primary {
+    width: 100%;
+    text-align: center;
+  }
+
+  .btn-row {
+    flex-wrap: wrap;
+  }
+
+  .card {
+    padding: 1rem;
+  }
+
+  .card-header {
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .subject-bar {
+    gap: 0.4rem;
+  }
+
+  .subject-btn {
+    font-size: 0.78rem;
+    padding: 0.4rem 0.75rem;
+  }
+
+  .pre-code,
+  .pre-io,
+  .pre-output,
+  .pre-answer {
+    overflow-x: auto;
+    word-break: break-word;
+    white-space: pre-wrap;
+  }
+
+  .option-btn {
+    font-size: 0.8rem;
+  }
+}
+/* ─────────────────────────────────────────────────────────── */
