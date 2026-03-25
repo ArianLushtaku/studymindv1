@@ -37,11 +37,11 @@ function splitCode(codeblock) {
 }
 
 export default function CodeQuestion({ q, sessionKey}) {
+  const { editable, tests } = splitCode(q.codeblock)
   const codeKey = `code_${sessionKey}_${q.id}`
-  const savedCode = localStorage.getItem(codeKey) || q.codeblock || ''
+  const savedCode = localStorage.getItem(codeKey) || editable || ''
   const [code, setCode] = useState(savedCode)
   // eslint-disable-next-line no-unused-vars
-  const { editable, tests } = splitCode(q.codeblock)
   const [output, setOutput] = useState('')
   const [running, setRunning] = useState(false)
   const [showAnswer, setShowAnswer] = useState(false)
