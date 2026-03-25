@@ -28,28 +28,45 @@ export function usePyodide() {
   }
 
   const run = async (code, setOutput, setRunning) => {
-    if (!pyodideRef.current) { setOutput('Python ikke klar endnu...'); return }
-    setRunning(true)
-    setOutput('')
-    try {
-      // Normalize 2-space indent to 4-space
-      const normalizedCode = code.split('\n').map(line => {
-        const match = line.match(/^(\s+)/)
-        if (!match) return line
-        // eslint-disable-next-line no-regex-spaces
-        const spaces = match[1].replace(/  /g, '    ')
-        return spaces + line.trimStart()
-      }).join('\n')
+  if (!pyodideRef.current) { setOutput('Python ikke klar endnu...'); return }
+  setRunning(true)
+  setOutput('Installerer pakker...')
+  
+  try {
+    // Extract all imports from the code
+    const importMatches = code.match(/^(?:import|from)\s+([a-zA-Z0-9_]+)/gm) || []
+    const modules = importMatches
+      .map(m => m.replace(/^(?:import|from)\s+/, '').trim())
+      .filter(m => !['sys', 'io', 're', 'os', 'math', 'json', 'random', 
+                      'datetime', 'collections', 'itertools', 'functools',
+                      'string', 'time', 'copy', 'abc', 'typing'].includes(m))
 
-      await pyodideRef.current.runPythonAsync(`import sys, io\nsys.stdout = io.StringIO()`)
-      await pyodideRef.current.runPythonAsync(normalizedCode)
-      const out = await pyodideRef.current.runPythonAsync(`sys.stdout.getvalue()`)
-      setOutput(out || '(ingen output)')
-    } catch (e) {
-      setOutput('Error: ' + e.message)
+    if (modules.length > 0) {
+      await pyodideRef.current.runPythonAsync(`
+import micropip
+import asyncio
+async def install_packages():
+    packages = ${JSON.stringify(modules)}
+    for pkg in packages:
+        try:
+            await micropip.install(pkg)
+        except Exception as e:
+            print(f"Could not install {pkg}: {e}")
+await install_packages()
+      `)
     }
-    setRunning(false)
+
+    setOutput('')
+    await pyodideRef.current.runPythonAsync(`import sys, io\nsys.stdout = io.StringIO()`)
+    const normalizedCode = code.replace(/\t/g, '    ')
+    await pyodideRef.current.runPythonAsync(normalizedCode)
+    const out = await pyodideRef.current.runPythonAsync(`sys.stdout.getvalue()`)
+    setOutput(out || '(ingen output)')
+  } catch (e) {
+    setOutput('Error: ' + e.message)
   }
+  setRunning(false)
+}
 
 
   return { load, run, pyReady }

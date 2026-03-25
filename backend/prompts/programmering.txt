@@ -34,6 +34,7 @@ For Coding Questions, inkluder:
 - I bunden af Codeblock: Skriv tests i bunden, så hvis koden er korrekt og køres, så vil testene bekræfte. 
 - Adskil altid startkoden fra test cases med kommentaren `# Test cases` på sin egen linje.
 - LAV KUN INDENTATION MED 2 SPACES, ELLERS BREAKER KODEN. ALLE KOMMENTARER
+- Note that not all packages are available in Pyodide — it only supports packages that have been compiled to WebAssembly. requests for example is available, but something like flask is not. Consider this when making tasks.
 - Answer: Løsningskode
 - Hint: Hint om hvilke emner der er involveret og hvordan det implementeres, på dansk
 

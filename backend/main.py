@@ -1,11 +1,11 @@
-from flask import Flask, jsonify, request
-from flask_cors import CORS
-from pypdf import PdfReader
+from flask import Flask, jsonify, request # type: ignore
+from flask_cors import CORS # type: ignore
+from pypdf import PdfReader # type: ignore
 from io import BytesIO
-from markitdown import MarkItDown
+from markitdown import MarkItDown # type: ignore
 import re
-import anthropic
-from dotenv import load_dotenv
+import anthropic # type: ignore
+from dotenv import load_dotenv # type: ignore
 import os
 from rag.ingester import ingest
 from rag.retriever import retrieve, get_collection_count
