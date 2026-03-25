@@ -19,9 +19,6 @@ env/
 .env.local
 .env.*.local
 
-# ChromaDB
-chroma_db/
-
 # Flask
 instance/
 *.sqlite

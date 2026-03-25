@@ -1,8 +1,8 @@
 import { useState } from 'react'
 
-export default function MCQQuestion({ q }) {
-  const selectedKey = `selected_${q.id}`
-  const revealedKey = `revealed_${q.id}`
+export default function MCQQuestion({ q, sessionKey }) {
+  const selectedKey = `selected_${sessionKey}_${q.id}`
+  const revealedKey = `revealed_${sessionKey}_${q.id}`
 
   const [selected, setSelected] = useState(localStorage.getItem(selectedKey) || null)
   const [revealed, setRevealed] = useState(localStorage.getItem(revealedKey) === 'true')

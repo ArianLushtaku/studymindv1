@@ -36,10 +36,12 @@ function splitCode(codeblock) {
   return { editable: codeblock, tests: '' }
 }
 
-export default function CodeQuestion({ q }) {
-  const { editable, tests } = splitCode(q.codeblock)
-  const savedCode = localStorage.getItem(`code_${q.id}`) || editable
+export default function CodeQuestion({ q, sessionKey}) {
+  const codeKey = `code_${sessionKey}_${q.id}`
+  const savedCode = localStorage.getItem(codeKey) || q.codeblock || ''
   const [code, setCode] = useState(savedCode)
+  // eslint-disable-next-line no-unused-vars
+  const { editable, tests } = splitCode(q.codeblock)
   const [output, setOutput] = useState('')
   const [running, setRunning] = useState(false)
   const [showAnswer, setShowAnswer] = useState(false)
@@ -50,11 +52,13 @@ export default function CodeQuestion({ q }) {
 
   useEffect(() => {
     load(setOutput)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
-    if (!q.id) return
-    localStorage.setItem(`code_${q.id}`, code)
+    if (!q.id || !sessionKey) return
+    localStorage.setItem(codeKey, code)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [code])
 
   useEffect(() => {
@@ -79,6 +83,7 @@ export default function CodeQuestion({ q }) {
       }),
       parent: editorRef.current
     })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const runFull = () => {

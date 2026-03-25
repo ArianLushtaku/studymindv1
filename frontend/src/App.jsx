@@ -100,13 +100,29 @@ export default function App() {
 }
 
   const deleteSession = (key) => {
-    localStorage.removeItem(key)
-    setSessions(getSavedSessions())
-    if (activeSession === key) {
-      setQuestions([])
-      setActiveSession(null)
+  // Remove questions cache
+  localStorage.removeItem(key)
+
+  // Remove all associated answer/code state for this session
+  const keysToRemove = []
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i)
+    if (k && (
+      k.startsWith(`code_${key}`) ||
+      k.startsWith(`selected_${key}`) ||
+      k.startsWith(`revealed_${key}`)
+    )) {
+      keysToRemove.push(k)
     }
   }
+  keysToRemove.forEach(k => localStorage.removeItem(k))
+
+  setSessions(getSavedSessions())
+  if (activeSession === key) {
+    setQuestions([])
+    setActiveSession(null)
+  }
+}
 
   const now = new Date()
   const dateStr = now.toISOString().split('T')[0]
@@ -204,8 +220,8 @@ export default function App() {
             <p className="question-count">// {questions.length} spørgsmål genereret</p>
             {questions.map(q =>
               q.type === 'code'
-                ? <CodeQuestion key={q.id} q={q} />
-                : <MCQQuestion key={q.id} q={q} />
+                ? <CodeQuestion key={q.id} q={q} sessionKey={activeSession} />
+                : <MCQQuestion key={q.id} q={q} sessionKey={activeSession} />
             )}
           </div>
         )}
