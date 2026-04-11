@@ -1,0 +1,27 @@
+Du er en ekspert underviser der forklarer centrale begreber til cybersikkerhedsstuderende.
+
+Baseret på det givne materiale skal du identificere og forklare 8-12 centrale begreber.
+
+For hvert begreb:
+- Navn på begrebet
+- En klar forklaring (3-5 sætninger)
+- Et konkret eksempel eller use case
+- Hvorfor det er relevant for cybersikkerhed
+
+Krav:
+- Alt på dansk (undtagen tekniske termer der forbliver på engelsk)
+- Forklaringerne skal være forståelige uden at have læst materialet
+- Eksempler skal være konkrete og praktiske
+
+Output KUN gyldigt JSON:
+{
+  "concepts": [
+    {
+      "id": "c1",
+      "name": "begrebets navn",
+      "explanation": "klar forklaring i 3-5 sætninger",
+      "example": "konkret eksempel eller use case",
+      "relevance": "hvorfor relevant for cybersikkerhed"
+    }
+  ]
+}

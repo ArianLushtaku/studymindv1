@@ -22,14 +22,14 @@ def chunk_text(text: str, chunk_size: int = 500, overlap: int = 50) -> list[str]
         i += chunk_size - overlap
     return chunks
 
-def embed_and_store(text: str, subject: str, source: str, doc_id: str):
+def embed_and_store(text: str, subject: str, source: str, doc_id: str, topic: str = ''):
     collection = get_collection(subject)
     chunks = chunk_text(text)
-    
+
     collection.add(
         documents=chunks,
         ids=[f'{doc_id}_chunk_{i}' for i in range(len(chunks))],
-        metadatas=[{'source': source} for _ in chunks]
+        metadatas=[{'source': source, 'topic': topic} for _ in chunks]
     )
-    
+
     return len(chunks)

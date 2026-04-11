@@ -9,6 +9,7 @@ from dotenv import load_dotenv # type: ignore
 import os
 from rag.ingester import ingest
 from rag.retriever import retrieve, get_collection_count
+import db
 
 
 load_dotenv()
@@ -26,11 +27,22 @@ def require_browser_origin():
 
 SUBJECT_MAP = {
     'Programmering': 'programmering',
-    'Forretningsforståelse': 'forretningsforståelse',
+    'Forretningsforståelse': 'forretningsforstaelse',
     'Computerarkitektur': 'computerarkitektur',
     'General': 'general'
 }
 SUBJECTS_WITH_BOOK = ['Forretningsforståelse']
+
+CONTENT_TYPES = {'mcq', 'flashcards', 'summary', 'concepts', 'tips', 'code'}
+
+PROMPT_MAP = {
+    'mcq': None,          # uses subject-specific prompt
+    'code': None,         # uses subject-specific prompt
+    'flashcards': 'flashcards',
+    'summary': 'summary',
+    'concepts': 'concepts',
+    'tips': 'tips',
+}
 
 
 def clean_pptx_text(text):
@@ -189,6 +201,86 @@ def generate():
     except Exception as e:
         return jsonify({'message': 'Error: ' + str(e)}), 500
 
+
+
+def call_claude_typed(text: str, book_context: str, content_type: str, subject: str) -> str:
+    """Generate content of a specific type using the matching prompt."""
+    prompt_file = PROMPT_MAP.get(content_type)
+    if prompt_file:
+        path = os.path.join('prompts', f'{prompt_file}.txt')
+        with open(path, 'r', encoding='utf-8') as f:
+            user_template = f.read().strip()
+        system = "Du er en ekspert underviser der hjælper cybersikkerhedsstuderende."
+    else:
+        system, user_template = load_prompt(subject)
+
+    book_section = f"\n\nBOG (kontekst):\n{book_context}" if book_context else ""
+    msg = client.messages.create(
+        model="claude-haiku-4-5-20251001",
+        max_tokens=8192,
+        system=system,
+        messages=[{"role": "user", "content":
+            f"{user_template}\n\nVIGTIGT: Output KUN gyldigt JSON, ingen markdown, ingen ekstra tekst.\n\nMATERIALE:\n{text}{book_section}"}],
+    )
+    raw = msg.content[0].text.replace('```json', '').replace('```', '').strip()
+    return raw
+
+
+@app.route('/topics', methods=['GET'])
+def get_topics():
+    subject = request.args.get('subject', '')
+    if not subject:
+        return jsonify({'error': 'subject required'}), 400
+    topics = db.get_topics(subject)
+    # Filter out internal topics
+    visible = [t for t in topics if not t['topic_name'].startswith('__')]
+    return jsonify({'topics': visible})
+
+
+@app.route('/content', methods=['POST'])
+def get_content():
+    blocked = require_browser_origin()
+    if blocked:
+        return blocked
+
+    data = request.json or {}
+    subject = data.get('subject', '')
+    topic = data.get('topic', '')
+    content_type = data.get('type', 'summary')
+
+    if not subject or not topic:
+        return jsonify({'error': 'subject and topic required'}), 400
+    if content_type not in CONTENT_TYPES:
+        return jsonify({'error': f'type must be one of {sorted(CONTENT_TYPES)}'}), 400
+
+    # Check cache
+    cached = db.get_cached(subject, topic, content_type)
+    if cached:
+        return jsonify({'data': cached, 'cached': True})
+
+    # Generate from ChromaDB
+    try:
+        count = get_collection_count(subject)
+        if count == 0:
+            return jsonify({'error': 'No content ingested for this subject'}), 400
+
+        chunks = retrieve(topic, subject, n_results=6, topic=topic)
+        slide_text = '\n\n'.join(chunks['slides']) if chunks['slides'] else ''
+
+        # Fallback: broader search if topic filter returned nothing
+        if not slide_text:
+            chunks = retrieve(topic, subject, n_results=6)
+            slide_text = '\n\n'.join(chunks['slides']) if chunks['slides'] else 'Ingen slides fundet.'
+
+        book_text = '\n\n'.join(chunks['book']) if chunks['book'] else ''
+
+        raw = call_claude_typed(slide_text, book_text, content_type, subject)
+        parsed = __import__('json').loads(raw)
+
+        db.set_cached(subject, topic, content_type, parsed)
+        return jsonify({'data': parsed, 'cached': False})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 
 if __name__ == '__main__':
